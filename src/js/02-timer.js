@@ -53,7 +53,6 @@ function timer(timeToEnd) {
     if (timeToEnd <= 1000) {
       clearInterval(intervalId);
       Notify.success(`End of sale`);
-      startBtn.removeAttribute('disabled');
     }
   }, 1000);
 }
