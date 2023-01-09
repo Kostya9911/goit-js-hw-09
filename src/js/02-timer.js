@@ -51,6 +51,7 @@ function timer(timeToEnd) {
     const { days, hours, minutes, seconds } = convertMs(timeToEnd);
     updateTimerFace({ days, hours, minutes, seconds });
     if (timeToEnd <= 1000) {
+      clearInterval(intervalId);
       Notify.success(`End of sale`);
       startBtn.removeAttribute('disabled');
     }
