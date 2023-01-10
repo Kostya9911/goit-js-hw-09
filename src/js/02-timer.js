@@ -2,6 +2,12 @@ import flatpickr from 'flatpickr';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import 'flatpickr/dist/flatpickr.min.css';
 
+/**
+  |============================
+  | // Змінні
+  |============================
+*/
+
 const refs = {
   days: document.querySelector('span[data-days]'),
   hours: document.querySelector('span[data-hours]'),
@@ -12,8 +18,6 @@ const refs = {
 const startBtn = document.querySelector('button[data-start]');
 const input = document.querySelector('input[type="text"]');
 const startTime = new Date().getTime();
-
-startBtn.setAttribute('disabled', 'disabled');
 
 const options = {
   enableTime: true,
@@ -28,19 +32,44 @@ const options = {
 const fp = flatpickr(input, options);
 let chosenDate = null;
 
+/**
+  |============================
+  | // Атрибути за замовчанням
+  |============================
+*/
+
+startBtn.setAttribute('disabled', 'disabled');
+
+/**
+  |============================
+  |  Слухачі
+  |============================
+*/
+
 startBtn.addEventListener('click', startTimer);
-input.addEventListener('change', () => {
+input.addEventListener('change', selectLogic);
+
+/**
+  |============================   
+//  Функції
+  |============================
+*/
+
+function selectLogic() {
   chosenDate = fp.selectedDates[0].getTime();
   if (chosenDate <= startTime) {
     Notify.failure('Please choose a date in the future', {
       timeout: 3000,
     });
+
     startBtn.setAttribute('disabled', 'disabled');
   } else startBtn.removeAttribute('disabled');
-});
+}
 
 function startTimer() {
+  input.setAttribute('disabled', 'disabled');
   let timeToEnd = chosenDate - Date.now();
+
   startBtn.setAttribute('disabled', 'disabled');
   timer(timeToEnd);
 }
@@ -53,6 +82,7 @@ function timer(timeToEnd) {
     if (timeToEnd <= 1000) {
       clearInterval(intervalId);
       Notify.success(`End of sale`);
+      input.removeAttribute('disabled');
     }
   }, 1000);
 }
