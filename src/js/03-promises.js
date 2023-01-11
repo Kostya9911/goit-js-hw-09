@@ -6,6 +6,7 @@ import { Notify } from 'notiflix/build/notiflix-notify-aio';
   |============================
 */
 const form = document.querySelector('form');
+const btn = document.querySelector('button');
 
 /**
   |============================
@@ -36,6 +37,7 @@ function createPromise(position, delay) {
 }
 
 function formSubmit(evt) {
+  btn.setAttribute('disabled', 'disabled');
   evt.preventDefault();
 
   // Питання! Нижче об`єкт - elements. Як йому передаються ключі delay, step, amount, та як JS розуміє де які елементи
@@ -50,10 +52,17 @@ function formSubmit(evt) {
   let numAmount = Number(amount.value);
   let i = 0;
 
+  // Також можна зробити лічілник через "for"
+
   const intervalId = setInterval(() => {
     i += 1;
     if (i === numAmount) {
       clearInterval(intervalId);
+
+      // Щоб кнопка активувалася з невеликим затриманням
+      setTimeout(() => {
+        btn.removeAttribute('disabled');
+      }, 1000);
     }
     createPromise(i, numDalay)
       .then(({ position, delay }) => {
