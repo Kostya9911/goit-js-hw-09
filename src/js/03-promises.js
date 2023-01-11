@@ -1,41 +1,66 @@
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+
+/**
+  |============================
+  | Змінні
+  |============================
+*/
+const form = document.querySelector('form');
+
+/**
+  |============================
+  | Слухачі
+  |============================
+*/
+
+form.addEventListener('submit', formSubmit);
+
+/**
+  |============================
+  | Функції
+  |============================
+*/
+
 function createPromise(position, delay) {
-  const shouldResolve = Math.random() > 0.3;
-  if (shouldResolve) {
-    // Fulfill
-  } else {
-    // Reject
-  }
+  return new Promise((resolve, reject) => {
+    const shouldResolve = Math.random() > 0.3;
+
+    setTimeout(() => {
+      if (shouldResolve) {
+        resolve({ position, delay });
+      } else {
+        reject({ position, delay });
+      }
+    }, delay);
+  });
 }
 
-// Change value of isSuccess variable to call resolve or reject
-const isSuccess = true;
+function formSubmit(evt) {
+  evt.preventDefault();
 
-const promise = new Promise((resolve, reject) => {
-  setTimeout(() => {
-    if (isSuccess) {
-      resolve('Success! Value passed to resolve function');
-    } else {
-      reject('Error! Error passed to reject function');
+  // Питання! Нижче об`єкт - elements. Як йому передаються ключі delay, step, amount, та як JS розуміє де які елементи
+  // привязати до ключів. Я знаю шо так можна, але ж не зрозумілі правила.
+
+  const {
+    elements: { delay, step, amount },
+  } = evt.currentTarget;
+
+  let numDalay = Number(delay.value);
+  let numStep = Number(step.value);
+  let numAmount = Number(amount.value);
+  let i = 0;
+
+  const intervalId = setInterval(() => {
+    i += 1;
+    if (i === numAmount) {
+      clearInterval(intervalId);
     }
-  }, 2000);
-});
-
-// Will run first
-console.log('Before promise.then()');
-
-// Registering promise callbacks
-promise.then(
-  // onResolve will run third or not at all
-  value => {
-    console.log('onResolve call inside promise.then()');
-    console.log(value); // "Success! Value passed to resolve function"
-  },
-  // onReject will run third or not at all
-  error => {
-    console.log('onReject call inside promise.then()');
-    console.log(error); // "Error! Error passed to reject function"
-  }
-);
-
-// Will run second
-console.log('After promise.then()');
+    createPromise(i, numDalay)
+      .then(({ position, delay }) => {
+        Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
+      })
+      .catch(({ position, delay }) => {
+        Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
+      });
+  }, numStep);
+}

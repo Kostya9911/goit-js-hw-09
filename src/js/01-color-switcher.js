@@ -4,8 +4,10 @@ function getRandomHexColor() {
 
 const startBtn = document.querySelector('button[data-start]');
 const stopBtn = document.querySelector('button[data-stop]');
+
 startBtn.style.fontSize = '40px';
 stopBtn.style.fontSize = '40px';
+
 stopBtn.setAttribute('disabled', 'disabled');
 
 let timerId = null;
